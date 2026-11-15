@@ -1,0 +1,72 @@
+name: Build ZY-366 FanchmWrt
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - name: Checkout fanchmwrt source
+        uses: actions/checkout@v4
+        with:
+          repository: fanchmwrt/fanchmwrt
+          ref: fanchmwrt-25.12.6
+          fetch-depth: 1
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential clang flex bison g++ gawk gcc-multilib g++-multilib gettext git libncurses-dev libssl-dev python3-distutils rsync unzip zlib1g-dev file wget xz-utils python3-setuptools libelf-dev aria2
+
+      - name: Apply ZY-366 device port
+        run: |
+          echo "I2luY2x1ZGUgIm10NzYyMG4uZHRzaSIKCiNpbmNsdWRlIDxkdC1iaW5kaW5ncy9ncGlvL2dwaW8uaD4KI2luY2x1ZGUgPGR0LWJpbmRpbmdzL2lucHV0L2lucHV0Lmg+CiNpbmNsdWRlIDxkdC1iaW5kaW5ncy9sZWRzL2NvbW1vbi5oPgoKLyB7Cgljb21wYXRpYmxlID0gInpvbmd5aSx6eS0zNjYiLCAicmFsaW5rLG10NzYyMG4tc29jIjsKCW1vZGVsID0gIlpvbmd5aSBaWS0zNjYiOwoKCWNob3NlbiB7CgkJYm9vdGFyZ3MgPSAiY29uc29sZT10dHlTMCw1NzYwMG44IjsKCX07CgoJYWxpYXNlcyB7CgkJbGVkLWJvb3QgPSAmbGVkX3N5czsKCQlsZWQtZmFpbHNhZmUgPSAmbGVkX3N5czsKCQlsZWQtcnVubmluZyA9ICZsZWRfc3lzOwoJCWxlZC11cGdyYWRlID0gJmxlZF9zeXM7Cgl9OwoKCWxlZHMgewoJCWNvbXBhdGlibGUgPSAiZ3Bpby1sZWRzIjsKCgkJLyogcmVzZXQg6ZSuIEdQSU8yNChncGlvMSwwKSDlt7Lnu48gYnJlZWQgYnRudHN0IOWunua1i+ehruiupCAqLwoJCWxlZF9zeXM6IHN5cyB7CgkJCWxhYmVsID0gImdyZWVuOnN5cyI7CgkJCWdwaW9zID0gPCZncGlvMSAxNCBHUElPX0FDVElWRV9MT1c+OwoJCX07CgoJCXdpZmkgewoJCQlsYWJlbCA9ICJncmVlbjp3aWZpIjsKCQkJZ3Bpb3MgPSA8JmdwaW8zIDAgR1BJT19BQ1RJVkVfTE9XPjsKCQl9OwoJfTsKCglrZXlzIHsKCQljb21wYXRpYmxlID0gImdwaW8ta2V5cyI7CgoJCXJlc2V0IHsKCQkJbGFiZWwgPSAicmVzZXQiOwoJCQlncGlvcyA9IDwmZ3BpbzEgMCBHUElPX0FDVElWRV9MT1c+OwoJCQlsaW51eCxjb2RlID0gPEtFWV9SRVNUQVJUPjsKCQl9OwoJfTsKfTsKCiZncGlvMSB7CglzdGF0dXMgPSAib2theSI7Cn07CgomZ3BpbzMgewoJc3RhdHVzID0gIm9rYXkiOwp9OwoKJnNwaTAgewoJc3RhdHVzID0gIm9rYXkiOwoKCWZsYXNoQDAgewoJCWNvbXBhdGlibGUgPSAiamVkZWMsc3BpLW5vciI7CgkJcmVnID0gPDA+OwoJCXNwaS1tYXgtZnJlcXVlbmN5ID0gPDEwMDAwMDAwPjsKCgkJcGFydGl0aW9ucyB7CgkJCWNvbXBhdGlibGUgPSAiZml4ZWQtcGFydGl0aW9ucyI7CgkJCSNhZGRyZXNzLWNlbGxzID0gPDE+OwoJCQkjc2l6ZS1jZWxscyA9IDwxPjsKCgkJCXBhcnRpdGlvbkAwIHsKCQkJCWxhYmVsID0gInUtYm9vdCI7CgkJCQlyZWcgPSA8MHgwIDB4MzAwMDA+OwoJCQkJcmVhZC1vbmx5OwoJCQl9OwoKCQkJcGFydGl0aW9uQDMwMDAwIHsKCQkJCWxhYmVsID0gInUtYm9vdC1lbnYiOwoJCQkJcmVnID0gPDB4MzAwMDAgMHgxMDAwMD47CgkJCQlyZWFkLW9ubHk7CgkJCX07CgoJCQlwYXJ0aXRpb25ANDAwMDAgewoJCQkJbGFiZWwgPSAiZmFjdG9yeSI7CgkJCQlyZWcgPSA8MHg0MDAwMCAweDEwMDAwPjsKCQkJCXJlYWQtb25seTsKCgkJCQludm1lbS1sYXlvdXQgewoJCQkJCWNvbXBhdGlibGUgPSAiZml4ZWQtbGF5b3V0IjsKCQkJCQkjYWRkcmVzcy1jZWxscyA9IDwxPjsKCQkJCQkjc2l6ZS1jZWxscyA9IDwxPjsKCgkJCQkJZWVwcm9tX2ZhY3RvcnlfMDogZWVwcm9tQDAgewoJCQkJCQlyZWcgPSA8MHgwIDB4MjAwPjsKCQkJCQl9OwoKCQkJCQltYWNhZGRyX2ZhY3RvcnlfNDogbWFjYWRkckA0IHsKCQkJCQkJcmVnID0gPDB4NCAweDY+OwoJCQkJCX07CgkJCQl9OwoJCQl9OwoKCQkJcGFydGl0aW9uQDUwMDAwIHsKCQkJCWNvbXBhdGlibGUgPSAiZGVueCx1aW1hZ2UiOwoJCQkJbGFiZWwgPSAiZmlybXdhcmUiOwoJCQkJcmVnID0gPDB4NTAwMDAgMHg3YjAwMDA+OwoJCQl9OwoJCX07Cgl9Owp9OwoKJmV0aGVybmV0IHsKCXBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7CglwaW5jdHJsLTAgPSA8JmVwaHlfcGlucz47CgoJbnZtZW0tY2VsbHMgPSA8Jm1hY2FkZHJfZmFjdG9yeV80PjsKCW52bWVtLWNlbGwtbmFtZXMgPSAibWFjLWFkZHJlc3MiOwoKCW1lZGlhdGVrLHBvcnRtYXAgPSAibGxsbHciOwp9OwoKJndtYWMgewoJbnZtZW0tY2VsbHMgPSA8JmVlcHJvbV9mYWN0b3J5XzA+OwoJbnZtZW0tY2VsbC1uYW1lcyA9ICJlZXByb20iOwp9OwoKJnN0YXRlX2RlZmF1bHQgewoJZGVmYXVsdCB7CgkJZ3JvdXBzID0gImkyYyIsICJ1YXJ0ZiIsICJzcGkgcmVmY2xrIiwgIndsZWQiOwoJCWZ1bmN0aW9uID0gImdwaW8iOwoJfTsKfTsK" | base64 -d > target/linux/ramips/dts/mt7620n_zongyi_zy-366.dts
+          echo "aW1wb3J0IHN5cwoKQkFTRSA9IHN5cy5hcmd2WzFdIGlmIGxlbihzeXMuYXJndikgPiAxIGVsc2UgJy4nCgojIDEpIDAyX25ldHdvcms6IOaKiiB6b25neWksenktMzY2IOWKoOWFpeS6pOaNouacuuerr+WPoyBjYXNlIOWSjCBXQU4gTUFDIGNhc2UKcCA9IEJBU0UgKyAnL3RhcmdldC9saW51eC9yYW1pcHMvbXQ3NjIwL2Jhc2UtZmlsZXMvZXRjL2JvYXJkLmQvMDJfbmV0d29yaycKcyA9IG9wZW4ocCkucmVhZCgpCgpzMiA9IHMucmVwbGFjZSgKICAgICd6YnRsaW5rLHpidC13cjgzMDVydHxcXFxuXHR6eXhlbCxrZWVuZXRpYy1saXRlLWlpaS1hfFxcJywKICAgICd6YnRsaW5rLHpidC13cjgzMDVydHxcXFxuXHR6b25neWksenktMzY2fFxcXG5cdHp5eGVsLGtlZW5ldGljLWxpdGUtaWlpLWF8XFwnCikKczMgPSBzMi5yZXBsYWNlKAogICAgJ3pidGxpbmssemJ0LXdlODI2LWV8XFxcblx0emJ0bGluayx6YnQtd3I4MzA1cnQpXG5cdFx0d2FuX21hYz0nLAogICAgJ3pidGxpbmssemJ0LXdlODI2LWV8XFxcblx0emJ0bGluayx6YnQtd3I4MzA1cnR8XFxcblx0em9uZ3lpLHp5LTM2Nilcblx0XHR3YW5fbWFjPScKKQphc3NlcnQgczIgIT0gcywgJ3BhdGNoMSBmYWlsZWQnCmFzc2VydCBzMyAhPSBzMiwgJ3BhdGNoMiBmYWlsZWQnCm9wZW4ocCwgJ3cnKS53cml0ZShzMykKcHJpbnQoJzAyX25ldHdvcmsgcGF0Y2hlZCcpCgojIDIpIG10NzYyMC5tazog6L+95Yqg6K6+5aSH5a6a5LmJCnAyID0gQkFTRSArICcvdGFyZ2V0L2xpbnV4L3JhbWlwcy9pbWFnZS9tdDc2MjAubWsnCm1rID0gb3BlbihwMikucmVhZCgpCmJsb2NrID0gJycnCmRlZmluZSBEZXZpY2Uvem9uZ3lpX3p5LTM2NgogIFNPQyA6PSBtdDc2MjBuCiAgSU1BR0VfU0laRSA6PSA3ODcyawogIERFVklDRV9WRU5ET1IgOj0gWm9uZ3lpCiAgREVWSUNFX01PREVMIDo9IFpZLTM2NgogIERFVklDRV9BTFQwX1ZFTkRPUiA6PSBDaGluYSBNb2JpbGUgVGlldG9uZwogIERFVklDRV9BTFQwX01PREVMIDo9IFl1IFJvdXRlciBaWS0zNjYKICBERVZJQ0VfUEFDS0FHRVMgOj0genJhbS1zd2FwCiAgU1VQUE9SVEVEX0RFVklDRVMgKz0genktMzY2CiAgREVGQVVMVCA6PSBuCmVuZGVmClRBUkdFVF9ERVZJQ0VTICs9IHpvbmd5aV96eS0zNjYKJycnCmFzc2VydCAnem9uZ3lpX3p5LTM2Nicgbm90IGluIG1rCm9wZW4ocDIsICdhJykud3JpdGUoYmxvY2spCnByaW50KCdtdDc2MjAubWsgYXBwZW5kZWQnKQo=" | base64 -d > port_zy366.py
+          python3 port_zy366.py
+          grep -q 'zongyi,zy-366' target/linux/ramips/mt7620/base-files/etc/board.d/02_network
+          grep -q 'zongyi_zy-366' target/linux/ramips/image/mt7620.mk
+          echo PORT-VERIFIED
+
+      - name: Update and install feeds
+        run: |
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+
+      - name: Generate config
+        run: |
+          echo "Q09ORklHX1RBUkdFVF9yYW1pcHM9eQpDT05GSUdfVEFSR0VUX3JhbWlwc19tdDc2MjA9eQpDT05GSUdfVEFSR0VUX3JhbWlwc19tdDc2MjBfREVWSUNFX3pvbmd5aV96eS0zNjY9eQpDT05GSUdfVEFSR0VUX1JPT1RGU19TUVVBU0hGUz15CiMgMzJNQiDlhoXlrZjnsr7nroA6IOWfuuehgOi3r+eUsSArIHpyYW0gKyBMdUNJIOS4reaWh+eVjOmdogpDT05GSUdfUEFDS0FHRV96cmFtLXN3YXA9eQpDT05GSUdfUEFDS0FHRV9sdWNpPXkKQ09ORklHX1BBQ0tBR0VfbHVjaS1pMThuLWJhc2UtemgtY249eQo=" | base64 -d > .config
+          for d in feeds/fanchmwrt/luci-app-fwx-*; do echo "CONFIG_PACKAGE_$(basename $d)=y" >> .config; done
+          make defconfig
+          grep -q 'CONFIG_TARGET_ramips_mt7620_DEVICE_zongyi_zy-366=y' .config
+          echo CONFIG-VERIFIED
+
+      - name: Download sources
+        run: make download -j4
+
+      - name: Build firmware
+        run: |
+          make -j4 V=s | tee build.log
+          exit ${PIPESTATUS[0]}
+
+      - name: Show build tail on failure
+        if: failure()
+        run: tail -80 build.log
+
+      - name: Upload firmware artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: zy366-fanchmwrt-firmware
+          path: |
+            bin/targets/ramips/mt7620/openwrt-ramips-mt7620-zongyi_zy-366-squashfs-sysupgrade.bin
+            bin/targets/ramips/mt7620/openwrt-ramips-mt7620-zongyi_zy-366.manifest
+            bin/targets/ramips/mt7620/sha256sums
+          if-no-files-found: error
+
+      - name: Upload build log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zy366-build-log
+          path: build.log
